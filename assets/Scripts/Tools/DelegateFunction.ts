@@ -1,1 +1,0 @@
-export type DelegateFunction<T extends any[] = []> = (...args: T) => void;

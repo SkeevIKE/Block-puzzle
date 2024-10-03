@@ -8,5 +8,15 @@
       "fitHeight": true,
       "fitWidth": true
     }
+  },
+  "sorting-layer": {
+    "layers": [
+      {
+        "id": 0,
+        "name": "default",
+        "value": 0
+      }
+    ],
+    "increaseId": 1
   }
 }
