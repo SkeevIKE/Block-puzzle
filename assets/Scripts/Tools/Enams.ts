@@ -1,4 +1,40 @@
-export enum CellState {
-    Empty,
-    Occupied
-}
+import { Enum } from "cc"
+
+export enum ShapeType {
+    Point,
+    VerticalLine2,
+    HorizontalLine2,
+    VerticalLine3,
+    HorizontalLine3,
+    VerticalLine4,
+    HorizontalLine4,
+    UpRigthCorner3,
+    UpLeftCorner3,
+    DownRigthCorner3,
+    DownLeftCorner3,
+    UpRigthCorner4,
+    UpLeftCorner4,
+    DownRigthCorner4,
+    DownLeftCorner4,
+    UpRigthCorner5,
+    UpLeftCorner5,
+    DownRigthCorner5,
+    DownLeftCorner5,
+    UpT4,
+    DownT4,
+    RigthT4,
+    LeftT4,
+    VerticalRightSteps4,
+    VerticalLeftSteps4,
+    HorizontalRightSteps4,
+    HorizontalLeftSteps4,
+    RightDiagonal2,
+    LeftDiagonal2,
+    RightDiagonal3,
+    LeftDiagonal3,
+    Square,
+    RightU,
+    LeftU,
+    Cross5
+};
+Enum(ShapeType);

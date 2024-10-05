@@ -13,9 +13,9 @@ export class Test extends Component {
     private Check(event: EventTouch) {
         const positionScreen = event.getUILocation();        
         
-        const localPosition = this.uiTransform.convertToNodeSpaceAR(new Vec3(positionScreen.x, positionScreen.y, 0));
+      //  const localPosition = this.uiTransform.convertToNodeSpaceAR(new Vec3(positionScreen.x, positionScreen.y, 0));
         
-        this.node.setPosition(localPosition);   
+       // this.node.setPosition(localPosition);   
         
        
         let colliders = PhysicsSystem2D.instance.testPoint(positionScreen);
