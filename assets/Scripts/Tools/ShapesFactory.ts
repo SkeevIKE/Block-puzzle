@@ -1,9 +1,10 @@
-import { _decorator, Node, instantiate, Prefab, resources, UITransform } from 'cc';
+import { _decorator, Node, instantiate, Prefab, resources } from 'cc';
 import { ShapeType } from './Enams';
 import { Shape } from '../Shapes/Shape';
 
 export class ShapesFactory {
-    private path: string = 'Prefabs/Shapes';
+    private readonly PATH: string = 'Prefabs/Shapes';
+
     private shapePrefabMap: { [key in ShapeType]?: Prefab } = {};
     private isLoaded: boolean = false;
     private loadingPromise: Promise<void> | null = null;
@@ -19,9 +20,9 @@ export class ShapesFactory {
         }
        
         this.loadingPromise = new Promise<void>((resolve, reject) => {
-            resources.loadDir(this.path, Prefab, (err, prefabs) => {
+            resources.loadDir(this.PATH, Prefab, (err, prefabs) => {
                 if (err) {
-                    console.error(`Error loading prefabs from path: ${this.path}`, err);
+                    console.error(`Error loading prefabs from path: ${this.PATH}`, err);
                     this.loadingPromise = null;
                     reject(err);
                     return;
@@ -40,10 +41,6 @@ export class ShapesFactory {
         });
 
         return this.loadingPromise;
-    }
-
-    public isReady(): boolean {
-        return this.isLoaded;
     }
 
     public createShape(shapeType: ShapeType, parentTransform: Node): Shape {

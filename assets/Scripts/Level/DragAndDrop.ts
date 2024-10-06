@@ -32,7 +32,7 @@ export class DragAndDrop {
     private touch(position: Vec2) {
         let colliders = PhysicsSystem2D.instance.testPoint(position);        
         for (let collider of colliders) {
-            const shape = collider.node.parent.getComponent(Shape);
+            const shape = collider.node.getComponent(Shape);
             if (shape) {
                 this.selectedShape = shape;
                 const vec3position = new Vec3(position.x, position.y, 0)

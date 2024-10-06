@@ -1,14 +1,14 @@
 import { _decorator, instantiate, Prefab, resources, Color, Node } from 'cc';
 import { Cell } from '../Board/Cell';
 import { zones } from '../Board/Zones';
+import { Debugger } from './Debugger';
 
 export class CellsFactory {
-    private path: string = 'Prefabs/Cells/Cell';
-    private zoneColor = new Color(200, 200, 200); 
+    private readonly PATH: string = 'Prefabs/Cells/Cell';    
+
     private cellPrefab: Prefab | null = null;
     private isLoaded: boolean = false;
-    private loadingPromise: Promise<void> | null = null;
-    private cells: Cell[][] = [];
+    private loadingPromise: Promise<void> | null = null;    
 
     public async loadCellPrefab(): Promise<void> {
         if (this.isLoaded) {
@@ -21,9 +21,9 @@ export class CellsFactory {
         }
 
         this.loadingPromise = new Promise<void>((resolve, reject) => {
-            resources.load(this.path, Prefab, (err, prefab) => {
+            resources.load(this.PATH, Prefab, (err, prefab) => {
                 if (err) {
-                    console.error(`Error loading cell prefab from path: ${this.path}`, err);
+                    console.error(`Error loading cell prefab from path: ${this.PATH}`, err);
                     this.loadingPromise = null;
                     reject(err);
                     return;
@@ -47,9 +47,9 @@ export class CellsFactory {
             throw new Error('CellsFactory is not loaded yet. Please wait for the load to complete before creating cells.');
         }
 
-        this.cells = [];
+        const cells: Cell[][] = [];
         for (let row = 0; row < rows; row++) {
-            this.cells[row] = [];
+            cells[row] = [];
             for (let col = 0; col < cols; col++) {
                 const cellNode = instantiate(this.cellPrefab);
                 cellNode.setParent(parentTransform);
@@ -57,26 +57,27 @@ export class CellsFactory {
                 if (!cell) {
                     throw new Error('Cell component not found on instantiated prefab.');
                 }
-                cell.setIndex(row, col);
-                this.cells[row][col] = cell;
+                cell.initialize(row, col);
+                cells[row][col] = cell;
+                Debugger.createLabel(cell.node, row, col);         
             }
         }
         
-        this.highlightZones(rows, cols);
-        return this.cells;
+        this.highlightZones(rows, cols, cells);
+        return cells;
     }
 
-    private highlightZones(rows: number, cols: number): void { 
-        for (const zone of zones) {
-            for (let row = zone.startRow; row <= zone.endRow; row++) {
-                for (let col = zone.startCol; col <= zone.endCol; col++) {
-                    if (row < rows && col < cols) {
-                        const cell = this.cells[row][col];
-                        if (cell) {
-                            cell.setColor(this.zoneColor);
-                        }
+    private highlightZones(rows: number, cols: number, cells: Cell[][]): void {
+        for (let row = 0; row < rows; row++) {
+            for (let col = 0; col < cols; col++) {
+                let isInZone = false;
+                for (const zone of zones) {
+                    if (row >= zone.startRow && row <= zone.endRow && col >= zone.startCol && col <= zone.endCol) {
+                        isInZone = true;
+                        break;
                     }
                 }
+                cells[row][col].setStartColor(isInZone);
             }
         }
     }      
@@ -84,7 +85,6 @@ export class CellsFactory {
     public destroy(): void {
         this.isLoaded = false;
         this.cellPrefab = null;
-        this.loadingPromise = null;
-        this.cells = [];
+        this.loadingPromise = null;        
     }
 }

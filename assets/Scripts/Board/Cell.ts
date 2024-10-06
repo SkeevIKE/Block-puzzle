@@ -1,5 +1,7 @@
 import { _decorator, Color, Component, Enum, Sprite } from 'cc';
 import { Content } from './Content';
+import { GameSettings } from '../Level/GameSettings';
+import { ServiceAllocator, ServiceKey } from '../Tools/ServiceAllocator';
 
 const { ccclass, property } = _decorator;
 
@@ -10,36 +12,57 @@ export enum CellState {
 Enum(CellState);
 
 @ccclass('Cell')
-export class Cell extends Component {
+export class Cell extends Component { 
+
     @property(Sprite)
     private sprite: Sprite | null = null;
-    
+
     @property(Content)
     private content: Content;
 
-    private cellState: CellState;
-
-    private row: number = 0;
-    private col: number = 0;
-
-    public get isEmpty(): boolean {
-        return this.cellState === CellState.Empty;
-    }
-
-    public getIndex(): { row: number; col: number } {
-        return { row: this.row, col: this.col };
-    }
-
-    public setIndex(row: number, col: number): void {
-        this.row = row;
-        this.col = col;
-    }
-
-    public setColor(color: Color): void {
-        if (this.sprite) {
-            this.sprite.color = color;
-        } else {
-            console.warn('Sprite component is not assigned to this cell.');
-        }       
+    private indexX: number = -1;
+    private indexY: number = -1;   
+    private cellState: CellState = CellState.Empty;
+    private startColor: Color;
+    private setting: GameSettings;
+    
+    public get getIndex(): [x: number, y: number] {
+        return [ this.indexX, this.indexY ];
     }   
+
+    public initialize(x: number, y: number): void {
+        this.setting = ServiceAllocator.get(ServiceKey.GameSettings);
+        this.indexX = x;
+        this.indexY = y;   
+    }
+
+    public setStartColor(isZone: boolean): void {
+        if (isZone){
+            this.sprite.color = this.setting.getZoneColor;
+        }
+
+        this.startColor = this.sprite.color.clone();
+    }
+
+    public isEmpty(): boolean {
+        return this.cellState === CellState.Empty;
+    } 
+
+    public setNormalColor(): void {        
+        this.sprite.color = this.startColor;
+    }
+    
+    public setShodowColor(): void {
+        this.sprite.color = this.setting.getShapeShadowColor;
+    }
+
+    public setEmpty(): void {
+        this.cellState = CellState.Empty;
+        this.content.setDisable();
+    }  
+
+    public setOccupied(): void {
+        this.cellState = CellState.Occupied;
+        this.content.setEnable();
+    }    
 }

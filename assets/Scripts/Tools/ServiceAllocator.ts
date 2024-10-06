@@ -2,7 +2,8 @@ export enum ServiceKey {
     GameSettings,  
     DragAndDrop,
     ShapesFactory,
-    CellsFactory
+    CellsFactory,
+    Board
 };
 
 export class ServiceAllocator {
