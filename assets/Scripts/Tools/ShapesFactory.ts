@@ -32,7 +32,7 @@ export class ShapesFactory {
                 for (const prefab of prefabs) {
                     const shapeComponent = prefab.data.getComponent(Shape);
                     if (shapeComponent) {
-                        const shapeType = shapeComponent.getShapeType();
+                        const shapeType = shapeComponent.getShapeType;
                         this.shapePrefabMap[shapeType] = prefab;
                     }
                 }

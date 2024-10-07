@@ -35,6 +35,8 @@ export enum ShapeType {
     Square,
     RightU,
     LeftU,
-    Cross5
+    Cross5,
+    UpU,
+    DownU
 };
 Enum(ShapeType);

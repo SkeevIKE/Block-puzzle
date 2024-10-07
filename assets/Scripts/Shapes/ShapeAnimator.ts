@@ -1,7 +1,7 @@
-import { Node, Quat, Vec3 } from 'cc';
+import { Node, Vec3 } from 'cc';
 import { ServiceAllocator, ServiceKey } from '../Tools/ServiceAllocator';
 import { TweenAnimation } from '../Tools/TweenAnimation';
-import { GameSettings } from '../Level/GameSettings';
+import { GameSettings } from '../Game/GameSettings';
 import { EventEmitter } from '../Tools/EventEmitter';
 
 export class ShapeAnimator {

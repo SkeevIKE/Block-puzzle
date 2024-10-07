@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<font>
+  <info face="uiChar" size="100" bold="0" italic="0" charset="" unicode="1" stretchH="100" smooth="1" aa="1" padding="0,0,0,0" spacing="1,1" outline="0"/>
+  <common lineHeight="100" base="16" scaleW="512" scaleH="512" pages="1" packed="0" alphaChnl="1" redChnl="0" greenChnl="0" blueChnl="0"/>
+  <pages>
+    <page id="0" file="uiChar_0.png" />
+  </pages>
+    <chars count="10">
+        <char id="48" x="0" y="0" width="69" height="108" xoffset="0" yoffset="0" xadvance="69" page="0" chnl="15" />
+        <char id="49" x="119" y="109" width="51" height="108" xoffset="0" yoffset="0" xadvance="51" page="0" chnl="15" />
+        <char id="50" x="271" y="0" width="63" height="108" xoffset="0" yoffset="0" xadvance="63" page="0" chnl="15" />
+        <char id="51" x="335" y="0" width="63" height="108" xoffset="0" yoffset="0" xadvance="63" page="0" chnl="15" />
+        <char id="52" x="399" y="0" width="63" height="108" xoffset="0" yoffset="0" xadvance="63" page="0" chnl="15" />
+        <char id="53" x="0" y="109" width="63" height="108" xoffset="0" yoffset="0" xadvance="63" page="0" chnl="15" />
+        <char id="54" x="70" y="0" width="66" height="108" xoffset="0" yoffset="0" xadvance="66" page="0" chnl="15" />
+        <char id="55" x="64" y="109" width="54" height="108" xoffset="0" yoffset="0" xadvance="54" page="0" chnl="15" />
+        <char id="56" x="137" y="0" width="66" height="108" xoffset="0" yoffset="0" xadvance="66" page="0" chnl="15" />
+        <char id="57" x="204" y="0" width="66" height="108" xoffset="0" yoffset="0" xadvance="66" page="0" chnl="15" />
+    </chars>
+</font>

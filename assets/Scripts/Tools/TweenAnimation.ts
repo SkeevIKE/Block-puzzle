@@ -1,4 +1,4 @@
-import { _decorator, Node, tween, TweenEasing, Vec3, Quat } from 'cc';
+import { _decorator, Node, tween, TweenEasing, Vec3, Quat, Sprite, Color } from 'cc';
 
 export class TweenAnimation {
     
@@ -54,6 +54,30 @@ export class TweenAnimation {
         newTween.start();
     }
 
+    public static fadeTo(sprite: Sprite, opacity: number, time: number = 0.1, easing: TweenEasing = 'sineOut', onComplete?: () => void): void {
+        this.stopFadeTween(sprite);
+        const startOpacity = sprite.color.a;
+        const newTween = tween({ opacity: startOpacity })
+            .to(time, { opacity }, {
+                easing,
+                onUpdate: (target: { opacity: number }) => {
+                    const color = sprite.color;
+                    sprite.color = new Color(color.r, color.g, color.b, target.opacity);
+                }
+            })
+            .call(() => {
+                if (onComplete) {
+                    onComplete();
+                }
+                this.clearFadeTweens(sprite);
+            });
+        if (!sprite['__fadeTweens']) {
+            sprite['__fadeTweens'] = [];
+        }
+        sprite['__fadeTweens'].push(newTween);
+        newTween.start();
+    }
+
     public static stopPositionTween(node: Node): void {
         if (node['__positionTweens']) {
             for (const positionTween of node['__positionTweens']) {
@@ -79,12 +103,25 @@ export class TweenAnimation {
             }
             this.clearScaleTweens(node);
         }
-    }  
+    } 
+
+     public static stopFadeTween(sprite: Sprite): void {
+        if (sprite['__fadeTweens']) {
+            for (const fadeTween of sprite['__fadeTweens']) {
+                fadeTween.stop();
+            }
+            this.clearFadeTweens(sprite);
+        }
+    }
 
     public static stopAllTweens(node: Node): void {
         this.stopPositionTween(node);
         this.stopRotationTween(node);
         this.stopScaleTween(node);
+        const sprite = node.getComponent(Sprite);
+        if (sprite){
+            this.stopFadeTween(sprite);
+        }
     }
 
     private static clearPositionTweens(node: Node): void {
@@ -97,5 +134,9 @@ export class TweenAnimation {
 
     private static clearScaleTweens(node: Node): void {
         node['__scaleTweens'] = [];
+    }
+
+    private static clearFadeTweens(sprite: Sprite): void {
+        sprite['__fadeTweens'] = [];
     }
 }

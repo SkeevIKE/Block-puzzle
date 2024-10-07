@@ -248,8 +248,8 @@
     },
     "_size": {
       "__type__": "cc.Size",
-      "width": 200,
-      "height": 200
+      "width": 266,
+      "height": 266
     },
     "_id": ""
   },
@@ -293,7 +293,6 @@
       "__id__": 0
     },
     "fileId": "db8bnSt5xGPreLPF3co81W",
-    "instance": null,
     "targetOverrides": []
   }
 ]
