@@ -1,13 +1,13 @@
 import { _decorator, Color, Component, Enum, Sprite } from 'cc';
 import { Content } from './Content';
-import { GameSettings } from '../Level/GameSettings';
+import { GameSettings } from '../Game/GameSettings';
 import { ServiceAllocator, ServiceKey } from '../Tools/ServiceAllocator';
 
 const { ccclass, property } = _decorator;
 
 export enum CellState {
     Empty,
-    Occupied
+    Occupied   
 };
 Enum(CellState);
 
@@ -15,7 +15,7 @@ Enum(CellState);
 export class Cell extends Component { 
 
     @property(Sprite)
-    private sprite: Sprite | null = null;
+    private sprite: Sprite;
 
     @property(Content)
     private content: Content;
@@ -30,10 +30,15 @@ export class Cell extends Component {
         return [ this.indexX, this.indexY ];
     }   
 
+    public get isEmpty(): boolean {
+        return this.cellState === CellState.Empty;
+    }  
+
     public initialize(x: number, y: number): void {
         this.setting = ServiceAllocator.get(ServiceKey.GameSettings);
         this.indexX = x;
-        this.indexY = y;   
+        this.indexY = y;  
+        this.content.initialize(); 
     }
 
     public setStartColor(isZone: boolean): void {
@@ -42,21 +47,20 @@ export class Cell extends Component {
         }
 
         this.startColor = this.sprite.color.clone();
+    }      
+
+    public setHighlightColor(): void {      
+        this.content.setHighlightColor();
+        this.sprite.color = this.setting.getShapeShadowColor; 
     }
 
-    public isEmpty(): boolean {
-        return this.cellState === CellState.Empty;
-    } 
-
-    public setNormalColor(): void {        
+    public setNormalColor(): void { 
         this.sprite.color = this.startColor;
-    }
-    
-    public setShodowColor(): void {
-        this.sprite.color = this.setting.getShapeShadowColor;
+        this.content.setNormalColor();
     }
 
-    public setEmpty(): void {
+    public setEmpty(): void {        
+        this.sprite.color = this.startColor;
         this.cellState = CellState.Empty;
         this.content.setDisable();
     }  

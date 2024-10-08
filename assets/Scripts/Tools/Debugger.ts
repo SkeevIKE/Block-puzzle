@@ -1,5 +1,5 @@
 import { _decorator, Color, Label, Layers, Node } from 'cc';
-import { GameSettings } from "../Level/GameSettings";
+import { GameSettings } from "../Game/GameSettings";
 import { ServiceAllocator, ServiceKey } from "./ServiceAllocator";
 
 export class Debugger { 

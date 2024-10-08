@@ -1,6 +1,6 @@
-import { _decorator, instantiate, Prefab, resources, Color, Node } from 'cc';
+import { _decorator, instantiate, Prefab, resources, Node } from 'cc';
 import { Cell } from '../Board/Cell';
-import { zones } from '../Board/Zones';
+import { spawnBorderZones } from '../Board/CheckerLogic';
 import { Debugger } from './Debugger';
 
 export class CellsFactory {
@@ -71,7 +71,7 @@ export class CellsFactory {
         for (let row = 0; row < rows; row++) {
             for (let col = 0; col < cols; col++) {
                 let isInZone = false;
-                for (const zone of zones) {
+                for (const zone of spawnBorderZones) {
                     if (row >= zone.startRow && row <= zone.endRow && col >= zone.startCol && col <= zone.endCol) {
                         isInZone = true;
                         break;

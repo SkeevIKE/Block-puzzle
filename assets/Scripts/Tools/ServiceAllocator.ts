@@ -3,7 +3,8 @@ export enum ServiceKey {
     DragAndDrop,
     ShapesFactory,
     CellsFactory,
-    Board
+    Board,
+    Audios
 };
 
 export class ServiceAllocator {

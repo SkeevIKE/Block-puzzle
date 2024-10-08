@@ -11,13 +11,13 @@ import { Block } from './Block';
 const { ccclass, property } = _decorator;
 
 @ccclass('Shape')
-export class Shape extends Component {    
+export class Shape extends Component {
     @property({ type: ShapeType })
     private shapeType: ShapeType = ShapeType.Point;
 
     @property(BoxCollider2D)
     private collider: BoxCollider2D;
-    
+
     @property([Block])
     private blocks: Block[] = [];
 
@@ -25,9 +25,15 @@ export class Shape extends Component {
     private animator: ShapeAnimator;
     private currentBlock: Block;
     private bottomCell: Cell;
-    private bottomCells: Cell[] = [];
+    private isHasEmptyBottomCells: boolean;
 
-    public destroed: EventEmitter<Shape> = new EventEmitter<Shape>();
+    public destroed: EventEmitter<[Shape]> = new EventEmitter<[Shape]>();
+    public droped: EventEmitter = new EventEmitter();
+
+    // also called by the shapes factory when searching for the required type in the resource folder
+    public get getShapeType(): ShapeType {
+        return this.shapeType;
+    }
 
     protected onEnable(): void {
         IndexCalculator.calculateIndices(this.blocks);
@@ -41,21 +47,17 @@ export class Shape extends Component {
         this.destroed.Invoke(this);
     }
 
-    // called by the shapes factory when searching for the required type in the resource folder
-    public getShapeType(): ShapeType {
-        return this.shapeType;
-    }
-
-    public checkIsCanPlaceShapeToBord(): void {
+    public checkIsCanPlaceShapeToBord(): boolean {
         const shapeIndices: [number, number][] = this.blocks.map(block => block.getIndex);
-        const isCanPlace = this.board.canPlaceShape(shapeIndices);    
-        this.blocks.forEach(block => isCanPlace ? block.setActivatedColor() : block.setDeactivatedColor());
+        const isCanPlace = this.board.canPlaceShape(shapeIndices);
+        this.blocks.forEach(block => isCanPlace ? block.setNormalColor() : block.setDeactivatedColor());
         this.collider.enabled = isCanPlace;
+        return isCanPlace;
     }
 
     public touch(position: Vec3): void {
         this.animator.animateTouch(this.node, position);
-       this.collider.enabled = false;
+        this.collider.enabled = false;
     }
 
     public drag(position: Vec3): void {
@@ -64,12 +66,12 @@ export class Shape extends Component {
     }
 
     public drop(): void {
-        if (this.bottomCells.length > 0) {
+        if (this.bottomCell && this.isHasEmptyBottomCells) {
             this.animator.moveToBoard(this.node, this.currentBlock.node.worldPosition, this.bottomCell.node.worldPosition);
         }
         else {
-            this.resetShadow();
             this.animator.resetPositionAndScale(this.node);
+            this.droped?.Invoke();
             this.collider.enabled = true;
         }
     }
@@ -84,7 +86,10 @@ export class Shape extends Component {
                 }
             }
         }
-        this.checkCells();
+        const bottomCellIndex = this.bottomCell ? this.bottomCell.getIndex : null;
+        const currentBlockIndex = this.bottomCell ? this.currentBlock.getIndex : null;
+        const blocks = this.bottomCell ? this.blocks : null;
+        this.isHasEmptyBottomCells = this.board.getShapeInCells(bottomCellIndex, currentBlockIndex, blocks);
     }
 
     private updateCurrentBottomCell(block: Block): boolean {
@@ -102,60 +107,9 @@ export class Shape extends Component {
         }
     }
 
-    private checkCells(): void {
-        if (!this.bottomCell) {
-            this.resetShadow();
-            return;
-        }
-
-        const bottomCells: Cell[] = [];
-        const currentBlockIndex = this.currentBlock.getIndex;
-        const bottomCellIndex = this.bottomCell.getIndex;
-        let isEmpty = true;
-
-        for (let i = 0; i < this.blocks.length; i++) {
-            const block = this.blocks[i];
-            let checkIndex: [x: number, y: number] = bottomCellIndex;
-
-            if (block !== this.currentBlock) {
-                const blockIndex = block.getIndex;
-                checkIndex = [
-                    bottomCellIndex[0] - (currentBlockIndex[0] - blockIndex[0]),
-                    bottomCellIndex[1] - (currentBlockIndex[1] - blockIndex[1])
-                ];
-            }
-
-            const cell = this.board.getCell(checkIndex);
-            if (cell && cell.isEmpty()) {
-                bottomCells.push(cell);
-            } else {
-                isEmpty = false;
-                break;
-            }
-        }
-
-        if (isEmpty) {
-            this.resetShadow();
-            bottomCells.forEach(cell => cell.setShodowColor());
-            this.bottomCells = bottomCells;
-        } else {
-            this.resetShadow();
-        }
-    }
-
-    private resetShadow(): void {
-        if (this.bottomCells.length > 0) {
-            this.bottomCells.forEach(cell => cell.setNormalColor());
-            this.bottomCells = [];
-        }
-    }
-
-    private onAnimatorMoveToBoardEnded = () => {
+    private onAnimatorMoveToBoardEnded = (): void => {
         this.animator.moveToBoardEnded.Unsubscribe(this.onAnimatorMoveToBoardEnded);
-        if (this.bottomCells.length > 0) {
-            this.bottomCells.forEach(cell => {  cell.setNormalColor(); cell.setOccupied(); });
-        }
+        this.board.addShape();
         this.node.destroy();
-        this.board.checkPattern();
     }
 }
